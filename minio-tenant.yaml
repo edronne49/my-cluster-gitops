@@ -20,7 +20,7 @@ spec:
     - name: pool-0        # <-- Obligatoire : Nom du pool
       servers: 1
       volumesPerServer: 1
-      size: 20Gi
+      size: 1Gi
       # On définit ici le modèle de volume proprement pour Kubernetes
       volumeClaimTemplate: 
         spec:
