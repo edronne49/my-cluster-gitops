@@ -1,5 +1,4 @@
 ---
-# 1. Création des identifiants (Login/Password)
 apiVersion: v1
 kind: Secret
 metadata:
@@ -7,12 +6,10 @@ metadata:
   namespace: minio
 type: Opaque
 stringData:
-  # Tu peux modifier ces valeurs ici directement
   accesskey: admin
   secretkey: password123
 
 ---
-# 2. Création du serveur MinIO (Tenant)
 apiVersion: minio.min.io/v2
 kind: Tenant
 metadata:
@@ -20,15 +17,20 @@ metadata:
   namespace: minio
 spec:
   pools:
-    - servers: 1
+    - name: pool-0        # <-- Obligatoire : Nom du pool
+      servers: 1
       volumesPerServer: 1
       size: 20Gi
-      storageClassName: longhorn
+      # On définit ici le modèle de volume proprement pour Kubernetes
+      volumeClaimTemplate: 
+        spec:
+          storageClassName: longhorn
+          accessModes:
+            - ReadWriteOnce
   mountpath: /export
   credsSecret:
     name: minio-creds-secret
   exposeServices:
     console: true
     minio: true
-  # Désactive TLS en interne pour faciliter l'accès via le proxy Rancher
   requestAutoCert: false
